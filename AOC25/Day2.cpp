@@ -1,8 +1,11 @@
+#define increasing 1
+#define decreasing 0
+
 #include <iostream>
 #include <fstream>
 #include <string>
 
-int Part1()
+int d2p1()
 {
 	std::ifstream file("D:\\input.txt");
 	std::string line;
@@ -27,14 +30,12 @@ int Part1()
 			{
 				status = dif > 0;
 			}
-			else if ((!status && dif > 0) || (status == 1 && dif < 0))
+			else if ((status == decreasing && dif > 0) || (status == increasing && dif < 0))
 			{
 				break;
 			}
-			
-			const int spc = line.find_first_of(' ');
 
-			if (spc == std::string::npos)
+			if (line.find_first_of(' ') == std::string::npos)
 			{
 				++SafeReports;
 				break;
@@ -47,10 +48,51 @@ int Part1()
 	return 0;
 }
 
-int main()
+int d2p2() // unfinished
 {
 	std::ifstream file("D:\\input.txt");
 	std::string line;
+
+	int SafeReports = 0;
+
+	while (std::getline(file, line))
+	{
+		int8_t status = -1;
+
+		bool IgnoredLvl = false;
+
+		std::cout << line;
+
+		std::string LineCpy = line;
+
+		while (true)
+		{
+			const int left = std::stoi(line);
+
+			const int OldLineSz = line.size();
+			line.erase(0, line.find_first_of(' ') + 1);
+
+			const int right = std::stoi(line);
+
+			const int dif = left - right;
+
+			if (status == -1)
+			{
+				status = dif > 0;
+			}
+
+			if (line.find_first_of(' ') == std::string::npos)
+			{
+				std::cout << " -> SAFE";
+				++SafeReports;
+				break;
+			}
+		}
+
+		std::cout << '\n';
+	}
+
+	std::cout << "Safe reports: " << SafeReports << '\n';
 
 	return 0;
 }

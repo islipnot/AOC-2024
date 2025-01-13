@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 
-int Part1()
+int d1p1()
 {
 	std::ifstream file("d:\\input.txt");
 	std::string line;
@@ -33,7 +33,7 @@ int Part1()
 	return 0;
 }
 
-int Part2()
+int d1p2()
 {
 	std::ifstream file("d:\\input.txt");
 	std::string line;
