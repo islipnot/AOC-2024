@@ -28,7 +28,7 @@ int Part1()
 		TotalDist += std::abs(LeftRow[i] - RightRow[i]);
 	}
 
-	std::cout << "Total Distance: " << TotalDist << '\n';
+	std::cout << "Total distance: " << TotalDist << '\n';
 
 	return 0;
 }
@@ -54,7 +54,7 @@ int Part2()
 		score += num * std::count(RightRow.begin(), RightRow.end(), num);
 	}
 
-	std::cout << "Similarity Score: " << score << '\n';
+	std::cout << "Similarity score: " << score << '\n';
 
 	return 0;
 }
