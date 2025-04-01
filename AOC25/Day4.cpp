@@ -122,7 +122,7 @@ bool IsValidX(std::vector<std::string>& data, int TargetIndex, size_t aPos)
 	return mask1 == mask2 && mask1 == ValidBits;
 }
 
-int main()
+int d4p2()
 {
 	std::ifstream file("d:\\input.txt");
 	std::vector<std::string> data;
