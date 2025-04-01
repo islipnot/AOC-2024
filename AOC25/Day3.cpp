@@ -53,7 +53,7 @@ int d3p1()
 	return 0;
 }
 
-int d3p2()
+int main()
 {
 	std::ifstream file("d:\\input.txt");
 	std::string line;
