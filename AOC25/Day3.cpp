@@ -6,7 +6,7 @@ long GetNextMul(std::string& line)
 {
 	while (true)
 	{
-		// Finding the next multiplication, breaking if there is none
+		// Finding the next multiplication, returning if there is none
 
 		const size_t MulPos = line.find("mul(");
 		if (MulPos == std::string::npos) return -1;
@@ -34,34 +34,71 @@ long GetNextMul(std::string& line)
 int d3p1()
 {
 	std::ifstream file("d:\\input.txt");
-	std::string line;
-
-	long result = 0;
+	std::string line, data;
 
 	while (std::getline(file, line))
 	{
-		while (true)
-		{
-			const long MulResult = GetNextMul(line);
-			if (MulResult != -1) result += MulResult;
-			else break;
-		}
+		data += line;
 	}
 
+	line.clear();
+
+	long result = 0;
+
+	while (true)
+	{
+		const long MulResult = GetNextMul(data);
+		if (MulResult != -1) result += MulResult;
+		else break;
+	}
+	
 	std::cout << "Result: " << result << '\n';
 
 	return 0;
 }
 
+void ClearDisabledMuls(std::string& line)
+{
+	while (true)
+	{
+		const size_t DontPos = line.find("don't()");
+
+		if (DontPos == std::string::npos) break;
+
+		const size_t DoPos = line.substr(DontPos).find("do()");
+
+		if (DoPos == std::string::npos)
+		{
+			line.erase(DontPos);
+			break;
+		}
+
+		line.erase(DontPos, DoPos + 4);
+	}
+}
+
 int main()
 {
 	std::ifstream file("d:\\input.txt");
-	std::string line;
+	std::string line, data;
 
-	while (std::getline(file, line))
-	{
-
+	while (std::getline(file, line)) 
+	{ 
+		data += line; 
 	}
+	
+	ClearDisabledMuls(data);
+
+	long result = 0;
+
+	while (true)
+	{
+		const long MulResult = GetNextMul(data);
+		if (MulResult != -1) result += MulResult;
+		else break;
+	}
+	
+	std::cout << "Result: " << result << '\n';
 
 	return 0;
 }
