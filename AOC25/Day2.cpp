@@ -1,7 +1,5 @@
-#include <iostream>
-#include <fstream>
+#include "pch.h"
 #include <sstream>
-#include <string>
 #include <vector>
 
 bool IsSafe(std::vector<int>& report)
@@ -51,6 +49,8 @@ int d2p1()
 		}
 	}
 
+	file.close();
+
 	std::cout << "Safe reports: " << SafeReports << '\n';
 
 	return 0;
@@ -91,6 +91,8 @@ int d2p2()
 			TempReport.erase(TempReport.begin() + i);
 		}
     }
+
+	file.close();
 
     std::cout << "Safe reports: " << SafeReports << '\n';
     return 0;

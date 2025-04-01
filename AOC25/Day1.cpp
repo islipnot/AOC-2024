@@ -1,6 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "pch.h"
 #include <vector>
 #include <algorithm>
 
@@ -18,6 +16,8 @@ int d1p1()
 		LeftLine.emplace_back(std::stoi(line));
 		RightLine.emplace_back(std::stoi(line.substr(offset)));
 	}
+
+	file.close();
 
 	std::sort(LeftLine.begin(), LeftLine.end());
 	std::sort(RightLine.begin(), RightLine.end());
@@ -48,6 +48,8 @@ int d1p2()
 		LeftLine.emplace_back(std::stoi(line));
 		RightLine.emplace_back(std::stoi(line.substr(offset)));
 	}
+
+	file.close();
 
 	int result = 0;
 

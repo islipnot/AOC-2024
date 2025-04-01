@@ -1,6 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "pch.h"
 
 long GetNextMul(std::string& line)
 {
@@ -34,14 +32,8 @@ long GetNextMul(std::string& line)
 int d3p1()
 {
 	std::ifstream file("d:\\input.txt");
-	std::string line, data;
-
-	while (std::getline(file, line))
-	{
-		data += line;
-	}
-
-	line.clear();
+	std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	file.close();
 
 	long result = 0;
 
@@ -57,7 +49,7 @@ int d3p1()
 	return 0;
 }
 
-void ClearDisabledMuls(std::string& line)
+void ClearDisabledData(std::string& line)
 {
 	while (true)
 	{
@@ -77,17 +69,13 @@ void ClearDisabledMuls(std::string& line)
 	}
 }
 
-int main()
+int d3p2()
 {
 	std::ifstream file("d:\\input.txt");
-	std::string line, data;
-
-	while (std::getline(file, line)) 
-	{ 
-		data += line; 
-	}
+	std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	file.close();
 	
-	ClearDisabledMuls(data);
+	ClearDisabledData(data);
 
 	long result = 0;
 
