@@ -75,7 +75,7 @@ int VerticalCheck(std::vector<std::string>& data, int TargetIndex, size_t xPos)
 	return result;
 }
 
-int main()
+int d4p1()
 {
 	std::ifstream file("d:\\input.txt");
 	std::vector<std::string> data;
@@ -112,15 +112,44 @@ int main()
 	return 0;
 }
 
-int d4p2()
+bool IsValidX(std::vector<std::string>& data, int TargetIndex, size_t aPos)
+{
+	const int mask1 = data[TargetIndex - 1][aPos - 1] | data[TargetIndex + 1][aPos + 1];
+	const int mask2 = data[TargetIndex - 1][aPos + 1] | data[TargetIndex + 1][aPos - 1];
+
+	constexpr int ValidBits = 'M' | 'S';
+
+	return mask1 == mask2 && mask1 == ValidBits;
+}
+
+int main()
 {
 	std::ifstream file("d:\\input.txt");
 	std::vector<std::string> data;
 
-	do { data.reserve(1); } while (std::getline(file, data.back()));
+	do { data.push_back({}); } while (std::getline(file, data.back()));
 	file.close();
+	data.pop_back();
 
-	
+	int result = 0;
+
+	for (int i = 1, sz = data.size() - 1; i < sz; ++i)
+	{
+		const std::string& line = data[i];
+		size_t aPos = line.substr(1, line.size() - 2).find('A') + 1;
+
+		while (aPos != std::string::npos)
+		{
+			result += IsValidX(data, i, aPos);
+
+			const size_t NextA = line.substr(aPos + 1).find('A');
+			if (NextA == std::string::npos) break;
+
+			aPos += NextA + 1;
+		}
+	}
+
+	std::cout << "Result: " << result << '\n';
 
 	return 0;
 }
