@@ -1,34 +1,36 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
 
 int d1p1()
 {
 	std::ifstream file("d:\\input.txt");
 	std::string line;
 
-	int TotalDist = 0;
-	std::vector<int> LeftRow, RightRow;
+	std::vector<int> LeftLine, RightLine;
 
 	while (std::getline(file, line))
 	{
-		static const int RowOffset = line.find_last_of(' ') + 1;
+		static const size_t offset = line.find_last_of(' ');
 
-		LeftRow.emplace_back(std::stoi(line));
-		RightRow.emplace_back(std::stoi(line.substr(RowOffset)));
+		LeftLine.emplace_back(std::stoi(line));
+		RightLine.emplace_back(std::stoi(line.substr(offset)));
 	}
 
-	std::sort(LeftRow.begin(), LeftRow.end());
-	std::sort(RightRow.begin(), RightRow.end());
+	std::sort(LeftLine.begin(), LeftLine.end());
+	std::sort(RightLine.begin(), RightLine.end());
 
-	for (int i = 0, s = LeftRow.size(); i < s; ++i)
+	int result = 0;
+
+	for (int i = 0; i < LeftLine.size(); ++i)
 	{
-		TotalDist += std::abs(LeftRow[i] - RightRow[i]);
+		result += std::abs(LeftLine[i] - RightLine[i]);
 	}
 
-	std::cout << "Total distance: " << TotalDist << '\n';
+	std::cout << "result: " << result << '\n';
 
 	return 0;
 }
@@ -38,23 +40,24 @@ int d1p2()
 	std::ifstream file("d:\\input.txt");
 	std::string line;
 
-	uint32_t score = 0;
-	std::vector<int> LeftRow, RightRow;
+	std::vector<int> LeftLine, RightLine;
 
 	while (std::getline(file, line))
 	{
-		static const int RowOffset = line.find_last_of(' ') + 1;
+		static const size_t offset = line.find_last_of(' ');
 
-		LeftRow.emplace_back(std::stoi(line));
-		RightRow.emplace_back(std::stoi(line.substr(RowOffset)));
+		LeftLine.emplace_back(std::stoi(line));
+		RightLine.emplace_back(std::stoi(line.substr(offset)));
 	}
 
-	for (int num : LeftRow)
+	int result = 0;
+
+	for (int num : LeftLine)
 	{
-		score += num * std::count(RightRow.begin(), RightRow.end(), num);
+		result += num * std::count(RightLine.begin(), RightLine.end(), num);
 	}
 
-	std::cout << "Similarity score: " << score << '\n';
+	std::cout << "result: " << result << '\n';
 
 	return 0;
 }
