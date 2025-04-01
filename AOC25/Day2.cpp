@@ -1,6 +1,3 @@
-#define increasing 1
-#define decreasing 0
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -9,9 +6,9 @@
 
 bool IsSafe(std::vector<int>& report)
 {
-	bool direction;
+	bool increasing;
 
-	for (int i = 0; i < report.size() - 1; ++i)
+	for (int i = 0, sz = report.size() - 1; i < sz; ++i)
 	{
 		// Validating the difference between levels
 
@@ -20,8 +17,8 @@ bool IsSafe(std::vector<int>& report)
 
 		// Validating the difference between directions
 
-		if (!i) direction = dif < 0;
-		else if ((direction == decreasing && dif < 0) || (direction == increasing && dif > 0)) return false;
+		if (!i) increasing = dif < 0;
+		else if ((!increasing && dif < 0) || (increasing && dif > 0)) return false;
 	}
 
 	return true;
@@ -59,7 +56,7 @@ int d2p1()
 	return 0;
 }
 
-int main() 
+int d2p2() 
 {
     std::ifstream file("d:\\input.txt");
     std::string line;

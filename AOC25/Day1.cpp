@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -30,7 +29,7 @@ int d1p1()
 		result += std::abs(LeftLine[i] - RightLine[i]);
 	}
 
-	std::cout << "result: " << result << '\n';
+	std::cout << "Similarity score: " << result << '\n';
 
 	return 0;
 }
@@ -57,7 +56,7 @@ int d1p2()
 		result += num * std::count(RightLine.begin(), RightLine.end(), num);
 	}
 
-	std::cout << "result: " << result << '\n';
+	std::cout << "Similarity score: " << result << '\n';
 
 	return 0;
 }
