@@ -107,7 +107,7 @@ void FixUpdate(std::unordered_set<std::string>& rules, std::string& update)
 	update = oss.str();
 }
 
-int main()
+int d5p2()
 {
 	std::ifstream file("d:\\input.txt");
 	std::unordered_set<std::string> rules = FillRuleSet(file);
