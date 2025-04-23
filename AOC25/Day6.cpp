@@ -2,7 +2,6 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include <unordered_set>
 
 #define up    '^'
 #define down  'v'
@@ -164,11 +163,11 @@ int d6p1()
 	return 0;
 }
 
-bool DetectLoop(std::vector<std::string>& grid, int GuardPos[2], int8_t GuardDir)
+bool DetectLoop(std::vector<std::string>& grid, std::array<int, 2> GuardPos, int8_t GuardDir)
 {
 	std::vector<std::array<int, 3>> CoordLog;
 
-	while (MoveGuard(grid, GuardPos, GuardDir, false))
+	while (MoveGuard(grid, GuardPos.data(), GuardDir, false))
 	{
 		for (auto& coords : CoordLog)
 		{
@@ -189,7 +188,7 @@ int main()
 	// Parsing input
 
 	std::ifstream input("d:\\input.txt");
-	std::vector<std::string> TempGrid, OgGrid, grid;
+	std::vector<std::string> grid, TempGrid;
 
 	do { grid.push_back({}); } while (std::getline(input, grid.back()));
 	input.close();
@@ -202,14 +201,13 @@ int main()
 
 	GetGuardPos(grid, GuardPos, GuardDir);
 
-	const int GuardStart[3] = { GuardPos[0], GuardPos[1], GuardDir };
-	TempGrid = OgGrid = grid;
+	const int GuardStart[2] = { GuardPos[0], GuardPos[1] };
 
 	// Getting the default gaurd path
 
 	while (MoveGuard(grid, GuardPos, GuardDir)) {}
 
-	GetGuardPos(TempGrid, GuardPos, GuardDir);
+	TempGrid = grid;
 
 	// For each iteration, the next line from the input is parsed
 	// Each position on the line visited by the guard will have a barrier placement simulated
@@ -224,15 +222,17 @@ int main()
 		for (int i = 0, LineSz = line.size(); i < LineSz; ++i)
 		{
 			if (line[i] != 'X') continue;
-			TempLine[i] = 'Z';
+
+			char& ch = TempLine[i];
+			const char OldCh = ch;
+
+			ch = 'Z';
 
 			// Checking if the current barrier placement resulted in a loop
 
-			if (DetectLoop(TempGrid, GuardPos, GuardDir)) ++loops;
+			if (DetectLoop(TempGrid, { GuardStart[0], GuardStart[1] }, GuardDir)) ++loops;
 
-			GuardPos[1] = GuardStart[1];
-			GuardPos[0] = GuardStart[0];
-			TempGrid = OgGrid;
+			ch = OldCh;
 		}
 	}
 
