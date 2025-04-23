@@ -1,18 +1,20 @@
 #include "pch.h"
+#include <array>
 #include <vector>
 #include <algorithm>
+#include <unordered_set>
 
 #define up    '^'
 #define down  'v'
 #define left  '<'
 #define right '>'
 
-bool CheckChar(std::vector<std::string>& data, int y, int x, int& steps)
+int CheckChar(std::vector<std::string>& grid, int y, int x, int& steps, bool DrawPath)
 {
-	char& ch = data[y][x];
+	char& ch = grid[y][x];
 
-	if (ch == '#') return true;
-	if (ch != 'X')
+	if (ch == '#' || ch == 'Z') return true;
+	if (ch != 'X' && DrawPath)
 	{
 		++steps;
 		ch = 'X';
@@ -21,18 +23,23 @@ bool CheckChar(std::vector<std::string>& data, int y, int x, int& steps)
 	return false;
 }
 
-bool MoveGuard(std::vector<std::string>& data, int GuardPos[2], int8_t& direction, int& steps)
+int MoveGuard(std::vector<std::string>& grid, int GuardPos[2], int8_t& GuardDir, bool DrawPath = true)
 {
-	switch (direction)
+	int steps = 0;
+	bool turned = false;
+
+	switch (GuardDir)
 	{
 	case up:
 	{
 		for (int i = GuardPos[1] - 1; i >= 0; --i)
 		{
-			if (CheckChar(data, i, GuardPos[0], steps))
+			if (CheckChar(grid, i, GuardPos[0], steps, DrawPath))
 			{
-				direction = right;
-				return true;
+				GuardDir = right;
+				turned = true;
+
+				break;
 			}
 
 			--GuardPos[1];
@@ -42,12 +49,14 @@ bool MoveGuard(std::vector<std::string>& data, int GuardPos[2], int8_t& directio
 	}
 	case down:
 	{
-		for (int i = GuardPos[1] + 1, sz = data.size(); i < sz; ++i)
+		for (int i = GuardPos[1] + 1, sz = grid.size(); i < sz; ++i)
 		{
-			if (CheckChar(data, i, GuardPos[0], steps))
+			if (CheckChar(grid, i, GuardPos[0], steps, DrawPath))
 			{
-				direction = left;
-				return true;
+				GuardDir = left;
+				turned = true;
+
+				break;
 			}
 
 			++GuardPos[1];
@@ -59,10 +68,12 @@ bool MoveGuard(std::vector<std::string>& data, int GuardPos[2], int8_t& directio
 	{
 		for (int i = GuardPos[0] - 1; i >= 0; --i)
 		{
-			if (CheckChar(data, GuardPos[1], i, steps))
+			if (CheckChar(grid, GuardPos[1], i, steps, DrawPath))
 			{
-				direction = up;
-				return true;
+				GuardDir = up;
+				turned = true;
+
+				break;
 			}
 
 			--GuardPos[0];
@@ -72,12 +83,14 @@ bool MoveGuard(std::vector<std::string>& data, int GuardPos[2], int8_t& directio
 	}
 	case right:
 	{
-		for (int i = GuardPos[0] + 1, sz = data[0].size(); i < sz; ++i)
+		for (int i = GuardPos[0] + 1, sz = grid[0].size(); i < sz; ++i)
 		{
-			if (CheckChar(data, GuardPos[1], i, steps))
+			if (CheckChar(grid, GuardPos[1], i, steps, DrawPath))
 			{
-				direction = down;
-				return true;
+				GuardDir = down;
+				turned = true;
+
+				break;
 			}
 
 			++GuardPos[0];
@@ -85,29 +98,21 @@ bool MoveGuard(std::vector<std::string>& data, int GuardPos[2], int8_t& directio
 	}
 	}
 
-	return false;
+	// Increment is done for DetectLoop() and will only ever occur then
+
+	if (!steps && turned) ++steps;
+	
+	return steps;
 }
 
-int main()
+void GetGuardPos(std::vector<std::string>& grid, int GuardPos[2], int8_t& GuardDir)
 {
-	std::ifstream file("d:\\input.txt");
-	std::vector<std::string> data;
-
-	do { data.push_back({}); } while (std::getline(file, data.back()));
-	file.close();
-	data.pop_back();
-
-	int GuardPos[2]; // GuardPos[0] == X, GuardPos[1] == Y
-	int8_t GuardDir = 0;
-
-	// Getting the position/direction of the guard
-
-	for (int i = 0, sz = data.size(); i < sz; ++i)
+	for (int i = 0, sz = grid.size(); i < sz; ++i)
 	{
-		const std::string& line = data[i];
-		const int8_t directions[4] = { up, down, left, right };
+		const std::string& line = grid[i];
+		constexpr int8_t directions[4] = { up, down, left, right };
 
-		for (char direction : directions)
+		for (const char direction : directions)
 		{
 			const size_t pos = line.find(direction);
 
@@ -122,13 +127,116 @@ int main()
 			}
 		}
 	}
+}
+
+int d6p1()
+{
+	// Parsing input
+
+	std::ifstream input("d:\\input.txt");
+	std::vector<std::string> grid;
+
+	do { grid.push_back({}); } while (std::getline(input, grid.back()));
+	input.close();
+	grid.pop_back();
+
+	// Parsing data regarding the gaurds starting position
+
+	int GuardPos[2]; // GuardPos[0] == X, GuardPos[1] == Y
+	int8_t GuardDir = 0;
+
+	GetGuardPos(grid, GuardPos, GuardDir);
 
 	// Simulating the guards path
 
-	int result = 1;
-	while (MoveGuard(data, GuardPos, GuardDir, result)) {}
+	int result = 0;
+
+	while (true)
+	{
+		const int steps = MoveGuard(grid, GuardPos, GuardDir);
+
+		if (steps) result += steps;
+		else break;
+	}
 
 	std::cout << "Result: " << result << '\n';
+
+	return 0;
+}
+
+bool DetectLoop(std::vector<std::string>& grid, int GuardPos[2], int8_t GuardDir)
+{
+	std::vector<std::array<int, 3>> CoordLog;
+
+	while (MoveGuard(grid, GuardPos, GuardDir, false))
+	{
+		for (auto& coords : CoordLog)
+		{
+			if (coords[0] == GuardPos[0] && coords[1] == GuardPos[1] && coords[2] == GuardDir)
+			{
+				return true;
+			}
+		}
+
+		CoordLog.emplace_back(std::array<int, 3>{ GuardPos[0], GuardPos[1], static_cast<int>(GuardDir) });
+	}
+
+	return false;
+}
+
+int main()
+{
+	// Parsing input
+
+	std::ifstream input("d:\\input.txt");
+	std::vector<std::string> TempGrid, OgGrid, grid;
+
+	do { grid.push_back({}); } while (std::getline(input, grid.back()));
+	input.close();
+	grid.pop_back();
+
+	// Parsing data regarding the gaurds starting position
+
+	int GuardPos[2]; // GuardPos[0] == X, GuardPos[1] == Y
+	int8_t GuardDir = 0;
+
+	GetGuardPos(grid, GuardPos, GuardDir);
+
+	const int GuardStart[3] = { GuardPos[0], GuardPos[1], GuardDir };
+	TempGrid = OgGrid = grid;
+
+	// Getting the default gaurd path
+
+	while (MoveGuard(grid, GuardPos, GuardDir)) {}
+
+	GetGuardPos(TempGrid, GuardPos, GuardDir);
+
+	// For each iteration, the next line from the input is parsed
+	// Each position on the line visited by the guard will have a barrier placement simulated
+
+	int loops = 0;
+
+	for (int y = 0, GridLen = grid.size(); y < GridLen; ++y)
+	{
+		std::string& line = grid[y];
+		std::string& TempLine = TempGrid[y];
+
+		for (int i = 0, LineSz = line.size(); i < LineSz; ++i)
+		{
+			if (line[i] != 'X') continue;
+			TempLine[i] = 'Z';
+
+			// Checking if the current barrier placement resulted in a loop
+
+			if (DetectLoop(TempGrid, GuardPos, GuardDir)) ++loops;
+
+			GuardPos[1] = GuardStart[1];
+			GuardPos[0] = GuardStart[0];
+			TempGrid = OgGrid;
+		}
+	}
+
+	std::cout << "Result: " << loops << '\n';
 
 	return 0;
 }
